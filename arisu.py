@@ -1,40 +1,49 @@
 import speech_recognition as sr
 import os
+from gtts import gTTS
+from playsound import playsound #pip install playsound==1.2.2
 
 def recognize_phrase(recog, mic):
     audio = recog.listen(mic)
     return recog.recognize_google(audio, language="en-US")
     
+def arisu_say(phrase):
+   language = 'en'
+   output = gTTS(text=phrase, lang=language, slow=False, tld='co.uk')
+   output.save("audio.mp3")
+   playsound('audio.mp3')
+   os.remove("audio.mp3")
+
 
 recongnition = sr.Recognizer() 
 with sr.Microphone() as microphone:
     while True:
         recongnition.adjust_for_ambient_noise(microphone)
-        print("Arisu: Say something...")
+        arisu_say("Arisu: Say something...")
         
         try:
             phrase = recognize_phrase(recongnition, microphone)
             print("You: " + phrase)
 
             if(phrase == "create folder"):
-                print("Arisu: name the folder")
+                arisu_say("name the folder")
                 answer = recognize_phrase(recongnition, microphone)
                 os.mkdir("./" + answer)
                 print("success!!!")
                 continue
             if(phrase == "open folder"):
-                print("Arisu: which one?")
+                arisu_say("which one?")
                 answer = recognize_phrase(recongnition, microphone)
                 os.startfile(answer)
                 print("done")
                 continue
             if(phrase == 'hello'):
-                print("Arisu: Hello master, what can I do for you?")
+                arisu_say("Hello master, what can I do for you?")
                 continue
             if(phrase == 'stop'):
-                print("Arisu: see you soon")
+                arisu_say("see you soon")
                 break
             else:
-                print("I'm sorry, I don't know how to answer that")
+                arisu_say("I'm sorry, I don't know how to answer that")
         except sr.UnknownValueError:
-            print("Arisu:  sorry, I didn't understood.")
+            arisu_say("Sorry, I didn't understood.")
