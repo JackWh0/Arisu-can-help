@@ -1,27 +1,30 @@
 import speech_recognition as sr
 import os
 
+def recognize_phrase(recog, mic):
+    audio = recog.listen(mic)
+    return recog.recognize_google(audio, language="en-US")
+    
+
 recongnition = sr.Recognizer() 
 with sr.Microphone() as microphone:
     while True:
         recongnition.adjust_for_ambient_noise(microphone)
         print("Arisu: Say something...")
-        audio = recongnition.listen(microphone)
+        
         try:
-            phrase = recongnition.recognize_google(audio, language="en-US")
+            phrase = recognize_phrase(recongnition, microphone)
             print("You: " + phrase)
 
             if(phrase == "create folder"):
                 print("Arisu: name the folder")
-                audio = recongnition.listen(microphone)
-                answer = recongnition.recognize_google(audio, language="en-US")
+                answer = recognize_phrase(recongnition, microphone)
                 os.mkdir("./" + answer)
                 print("success!!!")
                 continue
             if(phrase == "open folder"):
                 print("Arisu: which one?")
-                audio = recongnition.listen(microphone)
-                answer = recongnition.recognize_google(audio, language="en-US")
+                answer = recognize_phrase(recongnition, microphone)
                 os.startfile(answer)
                 print("done")
                 continue
@@ -31,5 +34,7 @@ with sr.Microphone() as microphone:
             if(phrase == 'stop'):
                 print("Arisu: see you soon")
                 break
+            else:
+                print("I'm sorry, I don't know how to answer that")
         except sr.UnknownValueError:
             print("Arisu:  sorry, I didn't understood.")
