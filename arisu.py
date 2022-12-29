@@ -3,9 +3,16 @@ import os
 from gtts import gTTS
 from playsound import playsound #pip install playsound==1.2.2
 
+recongnition = sr.Recognizer() 
+name = "master"
+
 def recognize_phrase(recog, mic):
+    print("listening...")
+    recongnition.adjust_for_ambient_noise(microphone)
     audio = recog.listen(mic)
-    return recog.recognize_google(audio, language="en-US")
+    text = recog.recognize_google(audio, language="en-US")
+    text = text.lower()
+    return text
     
 def arisu_say(phrase):
    language = 'en'
@@ -14,36 +21,50 @@ def arisu_say(phrase):
    playsound('audio.mp3')
    os.remove("audio.mp3")
 
-
-recongnition = sr.Recognizer() 
 with sr.Microphone() as microphone:
+    arisu_say("Hello {fname}, what can I do for you?".format(fname=name))
+    
     while True:
-        recongnition.adjust_for_ambient_noise(microphone)
-        arisu_say("Arisu: Say something...")
+        arisu_say("I'm waiting for commands...")
         
         try:
             phrase = recognize_phrase(recongnition, microphone)
             print("You: " + phrase)
 
-            if(phrase == "create folder"):
+            if(phrase in "create folder"):
                 arisu_say("name the folder")
                 answer = recognize_phrase(recongnition, microphone)
                 os.mkdir("./" + answer)
                 print("success!!!")
                 continue
-            if(phrase == "open folder"):
+            if(phrase in "open folder"):
                 arisu_say("which one?")
                 answer = recognize_phrase(recongnition, microphone)
                 os.startfile(answer)
                 print("done")
                 continue
-            if(phrase == 'hello'):
-                arisu_say("Hello master, what can I do for you?")
+            if(phrase in "delete folder"):
+                #ToDo
                 continue
-            if(phrase == 'stop'):
-                arisu_say("see you soon")
+            if(phrase in 'hello'):
+                arisu_say("Hello {fname}".format(fname=name))
+                continue
+            if(phrase in 'who are you'):
+                arisu_say("What do you mean? Did you forget me? I'm Arisu, your personal helper.")
+                continue
+            if(phrase in 'call me something else'):
+                arisu_say("Okay {fname}, how would you like me to call you?".format(fname=name));
+                name = input("type your name: ")
+                arisu_say("Alright, now I gonna call you {fname}".format(fname=name))
+                continue
+            if(phrase in 'stop'):
+                arisu_say("Ok {fname}, see you soon!".format(fname=name))
                 break
             else:
                 arisu_say("I'm sorry, I don't know how to answer that")
+        except sr.RequestError:
+            # API was unreachable or unresponsive
+            print("API unavailable")
         except sr.UnknownValueError:
+            print("You: " + phrase)
             arisu_say("Sorry, I didn't understood.")
