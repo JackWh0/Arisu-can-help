@@ -2,6 +2,10 @@ import speech_recognition as sr
 import os
 from gtts import gTTS
 from playsound import playsound #pip install playsound==1.2.2
+from datetime import datetime
+
+now = datetime.now()
+current_hour = int(now.strftime("%H"))
 
 recongnition = sr.Recognizer() 
 name = "master"
@@ -21,8 +25,18 @@ def arisu_say(phrase):
    playsound('audio.mp3')
    os.remove("audio.mp3")
 
+def greeting():
+    if(current_hour >= 0 and current_hour <= 4):
+        return "Wow you're still awake "
+    if(current_hour > 4 and current_hour <= 11):
+        return "Good morning "
+    if(current_hour > 11 and current_hour < 18):
+        return "Good afternoon "
+
+    return "Good evening"
+
 with sr.Microphone() as microphone:
-    arisu_say("Hello {fname}, what can I do for you?".format(fname=name))
+    arisu_say(greeting() + "{fname}".format(fname=name))
     
     while True:
         arisu_say("I'm waiting for commands...")
