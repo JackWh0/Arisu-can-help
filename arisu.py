@@ -68,7 +68,8 @@ with sr.Microphone() as microphone:
                 continue
             if(phrase in 'call me something else'):
                 arisu_say("Okay {fname}, how would you like me to call you?".format(fname=name));
-                name = input("type your name: ")
+                name = recognize_phrase(recongnition, microphone)
+                print("You: " + phrase)
                 arisu_say("Alright, now I gonna call you {fname}".format(fname=name))
                 continue
             if(phrase in 'stop'):
